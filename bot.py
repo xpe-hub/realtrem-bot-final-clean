@@ -92,33 +92,36 @@ class QueueView(View):
         current_players = len(queue['players'])
         label = f'Entrar na Fila [{current_players}/{max_players}]'
         if is_full or is_closed:
-            self.add_item(Button(label=label, emoji='❌', style=ButtonStyle.secondary, disabled=True, custom_id='join_queue_disabled'))
+            self.add_item(Button(label=label, emoji='❌', style=ButtonStyle.secondary, disabled=True, custom_id=f'join_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label=label, emoji='✅', style=ButtonStyle.success, disabled=False, custom_id='join_queue'))
+            self.add_item(Button(label=label, emoji='✅', style=ButtonStyle.success, disabled=False, custom_id=f'join_queue_{self.user_queue_key}'))
         
         # Botón Salir
         if is_closed:
-            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=True, custom_id='leave_queue_disabled'))
+            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=True, custom_id=f'leave_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False, custom_id='leave_queue'))
+            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False, custom_id=f'leave_queue_{self.user_queue_key}'))
         
         # Botón Cerrar (solo admin/creador)
         if is_full or is_closed:
-            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=True, custom_id='close_queue_disabled'))
+            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=True, custom_id=f'close_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False, custom_id='close_queue'))
+            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False, custom_id=f'close_queue_{self.user_queue_key}'))
 
-    @discord.ui.button(label='Entrar na Fila', emoji='✅', style=ButtonStyle.success, disabled=False, custom_id=f'join_queue_{user_queue_key}')
+    @discord.ui.button(label='Entrar na Fila', emoji='✅', style=ButtonStyle.success, disabled=False)
     async def join_button(self, interaction: discord.Interaction, button: Button):
-        await handle_queue_action(interaction, 'join')
+        # El user_queue_key ya está en self
+        await handle_queue_action(interaction, 'join', self.user_queue_key)
 
-    @discord.ui.button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False, custom_id=f'leave_queue_{user_queue_key}')
+    @discord.ui.button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False)
     async def leave_button(self, interaction: discord.Interaction, button: Button):
-        await handle_queue_action(interaction, 'leave')
+        # El user_queue_key ya está en self
+        await handle_queue_action(interaction, 'leave', self.user_queue_key)
 
-    @discord.ui.button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False, custom_id=f'close_queue_{user_queue_key}')
+    @discord.ui.button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False)
     async def close_button(self, interaction: discord.Interaction, button: Button):
-        await handle_queue_action(interaction, 'close')
+        # El user_queue_key ya está en self
+        await handle_queue_action(interaction, 'close', self.user_queue_key)
 
 # Función para verificar si el usuario está en un canal de voz permitido
 async def is_user_in_allowed_voice_channel(user):
@@ -373,11 +376,18 @@ def create_queue_embed(user_queue_key, is_closed=False):
     return embed
 
 # Función para manejar acciones de cola
-async def handle_queue_action(interaction, action):
-    game_mode = interaction.custom_id.split('_')[0] if '_' in interaction.custom_id else interaction.custom_id.replace('queue', '').strip('_')
+async def handle_queue_action(interaction, action, user_queue_key=None):
+    # Si no se pasa user_queue_key, extraerlo del custom_id (fallback)
+    if not user_queue_key:
+        game_mode = interaction.custom_id.split('_')[0] if '_' in interaction.custom_id else interaction.custom_id.replace('queue', '').strip('_')
+        user_id = str(interaction.user.id)
+        user_queue_key = f"{user_id}_{game_mode}"
+    else:
+        # Extraer game_mode del user_queue_key
+        game_mode = user_queue_key.split('_')[-1]
+    
     user_id = str(interaction.user.id)
     username = interaction.user.name
-    user_queue_key = f"{user_id}_{game_mode}"
 
     try:
         # Verificar si el usuario ya está en otra fila
