@@ -94,31 +94,31 @@ class QueueView(View):
         if is_full or is_closed:
             self.add_item(Button(label=label, emoji='❌', style=ButtonStyle.secondary, disabled=True, custom_id=f'join_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label=label, emoji='✅', style=ButtonStyle.success, disabled=False, custom_id=f'join_queue_{self.user_queue_key}'))
+            self.add_item(Button(label=label, emoji='☑️', style=ButtonStyle.success, disabled=False, custom_id=f'join_queue_{self.user_queue_key}'))
         
         # Botón Salir
         if is_closed:
-            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=True, custom_id=f'leave_queue_{self.user_queue_key}'))
+            self.add_item(Button(label='Sair da Fila', emoji='❎', style=ButtonStyle.danger, disabled=True, custom_id=f'leave_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False, custom_id=f'leave_queue_{self.user_queue_key}'))
+            self.add_item(Button(label='Sair da Fila', emoji='❎', style=ButtonStyle.danger, disabled=False, custom_id=f'leave_queue_{self.user_queue_key}'))
         
         # Botón Cerrar (solo admin/creador)
         if is_full or is_closed:
-            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=True, custom_id=f'close_queue_{self.user_queue_key}'))
+            self.add_item(Button(label='Encerrar a Fila', emoji='🔗', style=ButtonStyle.secondary, disabled=True, custom_id=f'close_queue_{self.user_queue_key}'))
         else:
-            self.add_item(Button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False, custom_id=f'close_queue_{self.user_queue_key}'))
+            self.add_item(Button(label='Encerrar a Fila', emoji='🔗', style=ButtonStyle.secondary, disabled=False, custom_id=f'close_queue_{self.user_queue_key}'))
 
-    @discord.ui.button(label='Entrar na Fila', emoji='✅', style=ButtonStyle.success, disabled=False)
+    @discord.ui.button(label='Entrar na Fila', emoji='☑️', style=ButtonStyle.success, disabled=False)
     async def join_button(self, interaction: discord.Interaction, button: Button):
         # El user_queue_key ya está en self
         await handle_queue_action(interaction, 'join', self.user_queue_key)
 
-    @discord.ui.button(label='Sair da Fila', emoji='❌', style=ButtonStyle.danger, disabled=False)
+    @discord.ui.button(label='Sair da Fila', emoji='❎', style=ButtonStyle.danger, disabled=False)
     async def leave_button(self, interaction: discord.Interaction, button: Button):
         # El user_queue_key ya está en self
         await handle_queue_action(interaction, 'leave', self.user_queue_key)
 
-    @discord.ui.button(label='Encerrar a Fila', emoji='🚫', style=ButtonStyle.secondary, disabled=False)
+    @discord.ui.button(label='Encerrar a Fila', emoji='🔗', style=ButtonStyle.secondary, disabled=False)
     async def close_button(self, interaction: discord.Interaction, button: Button):
         # El user_queue_key ya está en self
         await handle_queue_action(interaction, 'close', self.user_queue_key)
