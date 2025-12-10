@@ -427,18 +427,19 @@ async def handle_queue_action(interaction, action):
                 )
                 return
 
-            # Verificar si la fila está llena (Mensaje RealTREM)
             # Calcular máximo de jugadores basado en el modo
-        if game_mode == '1v1':
-            max_players = 2
-        elif game_mode == '2v2':
-            max_players = 4
-        elif game_mode == '3v3':
-            max_players = 6
-        elif game_mode == '4v4':
-            max_players = 8
-        else:
-            max_players = 2  # Default para casos no contemplados
+            if game_mode == '1v1':
+                max_players = 2
+            elif game_mode == '2v2':
+                max_players = 4
+            elif game_mode == '3v3':
+                max_players = 6
+            elif game_mode == '4v4':
+                max_players = 8
+            else:
+                max_players = 2  # Default para casos no contemplados
+
+            # Verificar si la fila está llena (Mensaje RealTREM)
             if len(queue['players']) >= max_players:
                 await interaction.response.send_message(
                     embed=Embed(
