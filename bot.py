@@ -438,13 +438,13 @@ async def handle_queue_action(interaction, action, user_queue_key=None):
                 return
 
             # Calcular máximo de jugadores basado en el modo
-            if game_mode == '1v1':
+            if self.game_mode == '1v1':
                 max_players = 2
-            elif game_mode == '2v2':
+            elif self.game_mode == '2v2':
                 max_players = 4
-            elif game_mode == '3v3':
+            elif self.game_mode == '3v3':
                 max_players = 6
-            elif game_mode == '4v4':
+            elif self.game_mode == '4v4':
                 max_players = 8
             else:
                 max_players = 2  # Default para casos no contemplados
