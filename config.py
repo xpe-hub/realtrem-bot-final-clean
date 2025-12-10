@@ -1,4 +1,4 @@
-# Configuración RealTREM - Copa Star Bot
+# Configuración FILAS - Copa Star Bot
 # IDs reales del servidor ORG | APOS STAR $
 
 # Discord Bot Token (se obtiene de variables de entorno)
@@ -84,7 +84,7 @@ import re
 
 def detect_room_data(message_content):
     """
-    Detecta si el mensaje contiene datos de sala en formato RealTREM
+    Detecta si el mensaje contiene datos de sala en formato FILAS
     Formato esperado: "12345678 / 12" o "12345678/12" o "12345678 - 12"
     """
     # Patrones para detectar ID/contraseña
@@ -106,7 +106,7 @@ def detect_room_data(message_content):
     
     return {'found': False}
 
-# Mensajes del sistema RealTREM
+# Mensajes del sistema FILAS
 REALTREM_MESSAGES = {
     'auto_move_success': '✅ **MOVIMENTAÇÃO AUTOMÁTICA REALIZADA!**\n\n🎮 A partida #{room_number} foi criada com sucesso!\n\n👥 **Jogadores movidos:**\nTeam 1: {team1_players}\nTeam 2: {team2_players}\n\n🔒 **Canais criados:**\n🔒 #{room_number} - Time 1\n🔒 #{room_number} - Time 2\n\n🎯 **Instruções:**\n• Aguardem a criação da sala pelo Staff\n• Quando a sala for criada, os dados serão enviados automaticamente\n• Se houver problemas, avisem @everyone',
     

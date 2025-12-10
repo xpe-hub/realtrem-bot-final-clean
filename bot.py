@@ -6,7 +6,7 @@ import asyncio
 import os
 import re
 from datetime import datetime
-import config  # Importar configuración RealTREM
+import config  # Importar configuración FILAS
 
 # Configuración del bot
 intents = discord.Intents.all()
@@ -27,7 +27,7 @@ CUSTOM_EMOJIS = {
     'volume': '🔊'
 }
 
-# Configuración RealTREM
+# Configuración FILAS
 VOICE_CHANNELS = config.AWAITING_CHANNELS  # Canales de espera
 CHANNEL_NAMES = config.CHANNEL_NAMES
 SERVER_CONFIG = config.SERVER_CONFIG
@@ -65,7 +65,7 @@ bot_status = [
     '⭐ Creando experiencias'
 ]
 
-# Vista para los botones de fila (Sistema RealTREM)
+# Vista para los botones de fila (Sistema FILAS)
 class QueueView(View):
     def __init__(self, user_queue_key):
         super().__init__(timeout=None)
@@ -88,7 +88,7 @@ class QueueView(View):
         is_full = len(queue['players']) >= max_players
         is_closed = queues.get(f'{user_queue_key}_closed', False)
         
-        # Botón Entrar (estilo RealTREM)
+        # Botón Entrar (estilo FILAS)
         current_players = len(queue['players'])
         label = f'Entrar na Fila [{current_players}/{max_players}]'
         if is_full or is_closed:
@@ -189,7 +189,7 @@ async def detect_room_data(interaction):
 
 # Criar embed para dados da sala
 async def create_room_data_embed(channel, room_number, room_data, players, team1, team2):
-    """Cria embed com os dados da sala em formato RealTREM"""
+    """Cria embed com os dados da sala em formato FILAS"""
     try:
         # Lista de jogadores
         player_list = '\n'.join([f'• {p["username"]}' for p in players])
@@ -356,7 +356,7 @@ def create_queue_embed(user_queue_key, is_closed=False):
             players.append('🟢 Libre')
         player_list = f'**Jugadores ({len(queue["players"])}/2):**\n{"\n".join(players)}'
 
-    # Color dinámico según el estado (estilo RealTREM)
+    # Color dinámico según el estado (estilo FILAS)
     if is_closed:
         embed_color = COLORS['error']  # Rojo para cerrada
     elif is_full:
@@ -369,8 +369,9 @@ def create_queue_embed(user_queue_key, is_closed=False):
         title=f'🎮 Copa Star - Fila {game_mode}',
         description=description
     )
+    embed.set_author(name='FILAS | STAR CUP', icon_url='https://cdn.discordapp.com/emojis/1151266789123026954.png')
     embed.add_field(name=status, value=player_list, inline=False)
-    embed.set_footer(text='Bot Copa Star • Sistema RealTREM')
+    embed.set_footer(text='Bot Copa Star • Sistema FILAS')
     embed.timestamp = datetime.utcnow()
 
     return embed
@@ -448,7 +449,7 @@ async def handle_queue_action(interaction, action, user_queue_key=None):
             else:
                 max_players = 2  # Default para casos no contemplados
 
-            # Verificar si la fila está llena (Mensaje RealTREM)
+            # Verificar si la fila está llena (Mensaje FILAS)
             if len(queue['players']) >= max_players:
                 await interaction.response.send_message(
                     embed=Embed(
@@ -558,7 +559,7 @@ async def update_queue_message(channel, user_queue_key):
     except Exception as error:
         print('Error al actualizar mensaje de la fila:', error)
 
-# Función para iniciar partida (Sistema RealTREM Completo)
+# Función para iniciar partida (Sistema FILAS Completo)
 async def start_match(interaction, game_mode, queue):
     try:
         # Obter número da sala
@@ -571,7 +572,7 @@ async def start_match(interaction, game_mode, queue):
             invitable=False
         )
 
-        # Dividir jogadores em times (estilo RealTREM)
+        # Dividir jogadores em times (estilo FILAS)
         if game_mode == '2v2':
             team1 = queue['teams'][0]
             team2 = queue['teams'][1]
@@ -579,7 +580,7 @@ async def start_match(interaction, game_mode, queue):
             team1 = [queue['players'][0]] if len(queue['players']) >= 1 else []
             team2 = [queue['players'][1]] if len(queue['players']) >= 2 else []
 
-        # Mensaje público de sucesso (estilo RealTREM)
+        # Mensaje público de sucesso (estilo FILAS)
         team1_players = ', '.join([p['username'] for p in team1])
         team2_players = ', '.join([p['username'] for p in team2])
         
@@ -591,7 +592,7 @@ async def start_match(interaction, game_mode, queue):
             )
         )
 
-        # MOVIMENTO AUTOMÁTICO (estilo RealTREM)
+        # MOVIMENTO AUTOMÁTICO (estilo FILAS)
         move_success = await auto_move_players_to_game_channels(room_number, team1, team2)
         
         if move_success:
@@ -609,7 +610,7 @@ async def start_match(interaction, game_mode, queue):
                 )
             )
         
-        # Mensaje privado no thread com instruções (estilo RealTREM)
+        # Mensaje privado no thread com instruções (estilo FILAS)
         player_list = '\n'.join([f'• {p["username"]}' for p in queue['players']])
         team1_list = '\n'.join([f'• {p["username"]}' for p in team1])
         team2_list = '\n'.join([f'• {p["username"]}' for p in team2])
@@ -777,7 +778,7 @@ async def on_message(message):
 
         await message.reply('✅ **¡Fila creada con éxito!**\n\nUsa los botones para gestionar la fila.')
 
-# Evento para detectar dados de sala (Sistema RealTREM)
+# Evento para detectar dados de sala (Sistema FILAS)
 @bot.event
 async def on_message(message):
     # Ignorar mensagens do bot
@@ -789,7 +790,7 @@ async def on_message(message):
         await handle_message_commands(message)
         return
     
-    # DETECÇÃO DE DADOS DA SALA (estilo RealTREM)
+    # DETECÇÃO DE DADOS DA SALA (estilo FILAS)
     try:
         # Verificar se está em thread de partida
         if isinstance(message.channel, discord.Thread) and message.channel.type == discord.ChannelType.private_thread:
@@ -822,7 +823,7 @@ async def on_message(message):
                     )
                     
                     if embed_message:
-                        # Mensaje de sucesso (estilo RealTREM)
+                        # Mensaje de sucesso (estilo FILAS)
                         await message.channel.send(
                             embed=Embed(
                                 color=COLORS['success'],
