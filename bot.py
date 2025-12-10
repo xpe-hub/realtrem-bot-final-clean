@@ -377,17 +377,16 @@ def create_queue_embed(user_queue_key, is_closed=False):
 
 # Función para manejar acciones de cola
 async def handle_queue_action(interaction, action, user_queue_key=None):
+    user_id = str(interaction.user.id)
+    username = interaction.user.name
+    
     # Si no se pasa user_queue_key, extraerlo del custom_id (fallback)
     if not user_queue_key:
         game_mode = interaction.custom_id.split('_')[0] if '_' in interaction.custom_id else interaction.custom_id.replace('queue', '').strip('_')
-        user_id = str(interaction.user.id)
         user_queue_key = f"{user_id}_{game_mode}"
     else:
         # Extraer game_mode del user_queue_key
         game_mode = user_queue_key.split('_')[-1]
-    
-    user_id = str(interaction.user.id)
-    username = interaction.user.name
 
     try:
         # Verificar si el usuario ya está en otra fila
