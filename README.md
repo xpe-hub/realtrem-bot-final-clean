@@ -28,7 +28,10 @@ DISCORD_TOKEN=tu_discord_bot_token_aqui
 2. **Variables de entorno:**
    - Ve a la sección "Variables" en Railway
    - Agrega: `DISCORD_TOKEN` = `tu_discord_bot_token_aqui`
-3. **Deploy:** Railway detectará automáticamente el requirements.txt y deployará
+3. **Deploy:** Railway detectará automáticamente:
+   - `requirements.txt` para instalar dependencias
+   - `nixpacks.toml` y `Procfile` para el comando de inicio
+   - Ejecutará automáticamente `python bot.py`
 
 ## 📝 Comandos
 
@@ -50,4 +53,6 @@ DISCORD_TOKEN=tu_discord_bot_token_aqui
 - `bot.py` - Código principal del bot
 - `config.py` - Configuración del servidor y canales
 - `requirements.txt` - Dependencias Python
+- `nixpacks.toml` - Configuración de build y start para Railway
+- `Procfile` - Comando de inicio alternativo para Railway
 - `.gitignore` - Archivos ignorados por Git
